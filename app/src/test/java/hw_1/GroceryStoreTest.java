@@ -11,6 +11,8 @@ import java.util.Map;
 
 class GroceryStoreTest {
     @Mock
+    //you don't need mock it because you test the class
+    //actually you have to mock your data source but in your implementation it will be not simple
     private GroceryStore groceryStore;
 
    @Test
@@ -93,4 +95,6 @@ class GroceryStoreTest {
         Assertions.assertEquals(
                 expected, actual);
     }
+
+    //add also test for wrong input
 }

@@ -45,6 +45,8 @@ public class GroceryStore {
 
     public JsonPrice jsonePriceGoods(Character product) throws FileNotFoundException {
         Gson gson = new Gson();
+        //please never use absolute path
+        //also use forward slash to make it executable on UNIX OS
         FileReader file = new FileReader("C:\\AnnaHuzii\\study java\\java_developer_hw\\jsonPrice.json");
         Type typeToken = TypeToken
                 .getParameterized(List.class, JsonPrice.class)
