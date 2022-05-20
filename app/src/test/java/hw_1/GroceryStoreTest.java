@@ -2,21 +2,30 @@ package hw_1;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 class GroceryStoreTest {
-    @Mock
-    //you don't need mock it because you test the class
-    //actually you have to mock your data source but in your implementation it will be not simple
-    private GroceryStore groceryStore;
+
+    @Test
+    public void quantityOneMultipliedByPriceGoodsAPlusUnnecessaryCharacters(){
+
+        float actual = new GroceryStore().calculateTotalCost("-/A I_");
+        float expected = 1.25F;
+        Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void quantityOneMultipliedByPriceGoodsI(){
+
+        float actual = new GroceryStore().calculateTotalCost("I");
+        float expected = 0.00F;
+        Assertions.assertEquals(expected, actual);
+    }
 
    @Test
-    public void quantityOneMultipliedByPriceGoodsA() throws FileNotFoundException {
+    public void quantityOneMultipliedByPriceGoodsA(){
 
         float actual = new GroceryStore().calculateTotalCost("A");
         float expected = 1.25F;
@@ -24,42 +33,49 @@ class GroceryStoreTest {
     }
 
     @Test
-    public void quantityThreeMultipliedByPriceGoodsA() throws FileNotFoundException {
+    public void quantityThreeMultipliedByPriceGoodsA(){
         float actual = new GroceryStore().calculateTotalCost("AAA");
         float expected = 3.00F;
         Assertions.assertEquals(expected, actual);
     }
 
     @Test
-    public void quantityThreeMultipliedByPriceGoodsB() throws FileNotFoundException {
+    public void quantityThreeMultipliedByPriceGoodsB(){
         float actual = new GroceryStore().calculateTotalCost("BBB");
         float expected = 12.75F;
         Assertions.assertEquals(expected, actual);
     }
 
     @Test
-    public void quantityOneMultipliedByPriceGoodsC() throws FileNotFoundException {
+    public void quantityOneMultipliedByPriceGoodsC(){
         float actual = new GroceryStore().calculateTotalCost("C");
         float expected = 1.0F;
         Assertions.assertEquals(expected, actual);
     }
 
     @Test
-    public void quantitySixMultipliedByPriceGoodsC() throws FileNotFoundException {
+    public void quantitySixMultipliedByPriceGoodsC(){
         float actual = new GroceryStore().calculateTotalCost("CCCCCC");
         float expected = 5.0F;
         Assertions.assertEquals(expected, actual);
     }
 
     @Test
-    public void quantitySixMultipliedByPriceGoodsD() throws FileNotFoundException {
+    public void quantitySixMultipliedByPriceGoodsD(){
         float actual = new GroceryStore().calculateTotalCost("DD");
         float expected = 1.5F;
         Assertions.assertEquals(expected, actual);
     }
 
     @Test
-    public void examplePromotionalQuantityAMultipliedByPriceAllGoods() throws FileNotFoundException {
+    public void examplePromotionalQuantityAMultipliedByPriceAllGoodsPlusI(){
+        float actual = new GroceryStore().calculateTotalCost("ABCDABAI");
+        float expected = 13.25F;
+        Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void examplePromotionalQuantityAMultipliedByPriceAllGoods(){
         float actual = new GroceryStore().calculateTotalCost("ABCDABA");
         float expected = 13.25F;
         Assertions.assertEquals(expected, actual);
@@ -84,7 +100,7 @@ class GroceryStoreTest {
     }
 
     @Test
-    public void jsonPriceGoodsAll() throws IOException {
+    public void jsonPriceGoodsAll(){
         JsonPrice actual = new GroceryStore().jsonePriceGoods('A');
         JsonPrice expected = new JsonPrice();
         expected.setGoods('A');
@@ -96,5 +112,10 @@ class GroceryStoreTest {
                 expected, actual);
     }
 
-    //add also test for wrong input
+    @Test
+    public void jsonPriceGoodsAbsent(){
+        JsonPrice actual = new GroceryStore().jsonePriceGoods('I');
+        Assertions.assertNull(actual);
+    }
+
 }

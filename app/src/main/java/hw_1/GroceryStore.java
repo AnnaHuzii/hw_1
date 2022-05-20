@@ -3,8 +3,8 @@ package hw_1;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -13,28 +13,34 @@ import java.util.List;
 import java.util.Map;
 
 public class GroceryStore {
+    private static final String PRICES_FILE_PATH = "jsonPrice.json";
 
-    public float calculateTotalCost(String goods) throws FileNotFoundException {
+    public float calculateTotalCost(String goods) {
+        String newGoods = goods.replaceAll("[ |_/-]", "");
         float sum;
         float sumAll = 0;
-        for (Character product : quantityGoods(goods).keySet()) {
+        for (Character product : quantityGoods(newGoods).keySet()) {
 
-            int quantity = quantityGoods(goods).get(product);
-            float price = jsonePriceGoods(product).getPrice();
-            boolean promotional = jsonePriceGoods(product).isPromotional();
-            int promotionalQuantity = jsonePriceGoods(product).getPromotionalQuantity();
-            float promotionalPrice = jsonePriceGoods(product).getPromotionalPrice();
+            int quantity = quantityGoods(newGoods).get(product);
+            if (jsonePriceGoods(product) != null) {
+                float price = jsonePriceGoods(product).getPrice();
+                boolean promotional = jsonePriceGoods(product).isPromotional();
+                int promotionalQuantity = jsonePriceGoods(product).getPromotionalQuantity();
+                float promotionalPrice = jsonePriceGoods(product).getPromotionalPrice();
 
-            if (promotional) {
-                if (quantity >= promotionalQuantity) {
-                    sum = (promotionalPrice / promotionalQuantity) * quantity;
+                if (promotional) {
+                    if (quantity >= promotionalQuantity) {
+                        sum = (promotionalPrice / promotionalQuantity) * quantity;
+                    } else {
+                        sum = price * quantity;
+                    }
                 } else {
                     sum = price * quantity;
                 }
+                sumAll += sum;
             } else {
-                sum = price * quantity;
+                return sumAll;
             }
-            sumAll += sum;
         }
 
         BigDecimal result = new BigDecimal(Double.toString(sumAll));
@@ -43,20 +49,21 @@ public class GroceryStore {
         return sum;
     }
 
-    public JsonPrice jsonePriceGoods(Character product) throws FileNotFoundException {
+    public JsonPrice jsonePriceGoods(Character product) {
         Gson gson = new Gson();
-        //please never use absolute path
-        //also use forward slash to make it executable on UNIX OS
-        FileReader file = new FileReader("C:\\AnnaHuzii\\study java\\java_developer_hw\\jsonPrice.json");
-        Type typeToken = TypeToken
-                .getParameterized(List.class, JsonPrice.class)
-                .getType();
-        List<JsonPrice> jsonPrice = gson.fromJson(file, typeToken);
         JsonPrice data = null;
-        for (JsonPrice price : jsonPrice) {
-            if (product.equals(price.getGoods())) {
-                data = price;
+        try (FileReader file = new FileReader(PRICES_FILE_PATH)) {
+            Type typeToken = TypeToken
+                    .getParameterized(List.class, JsonPrice.class)
+                    .getType();
+            List<JsonPrice> jsonPrice = gson.fromJson(file, typeToken);
+            for (JsonPrice price : jsonPrice) {
+                if (product.equals(price.getGoods())) {
+                    data = price;
+                }
             }
+        } catch (IOException e) {
+            throw new RuntimeException(String.format("File '%s' not found", PRICES_FILE_PATH));
         }
         return data;
     }
